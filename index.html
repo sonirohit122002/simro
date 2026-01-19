@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Be My Valentine 💖</title>
+<title>For My Rabbit 🐰💖</title>
 
 <style>
 body {
@@ -16,55 +16,44 @@ body {
   overflow: hidden;
 }
 
-.container {
-  text-align: center;
+.card {
   background: white;
   padding: 40px;
   border-radius: 20px;
   box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-  max-width: 400px;
+  max-width: 420px;
+  text-align: center;
   position: relative;
-  z-index: 2;
-}
-
-h1 { color: #ff4d6d; }
-
-.buttons {
-  margin-top: 30px;
-  position: relative;
-  height: 120px;
-}
-
-button {
-  padding: 12px 30px;
-  font-size: 18px;
-  border: none;
-  border-radius: 30px;
-  cursor: pointer;
-  position: absolute;
-}
-
-#yesBtn {
-  background: #ff4d6d;
-  color: white;
-  left: 30%;
-}
-
-#noBtn {
-  background: #adb5bd;
-  color: white;
-  left: 55%;
 }
 
 .hidden { display: none; }
 
-img {
-  width: 250px;
-  margin-top: 20px;
-  border-radius: 15px;
+button {
+  margin: 10px;
+  padding: 12px 25px;
+  font-size: 16px;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
 }
 
-/* 💓 Heart animation */
+.yes { background: #ff4d6d; color: white; }
+.no { background: #adb5bd; color: white; }
+
+input {
+  padding: 10px;
+  width: 80%;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+  text-align: center;
+  font-size: 16px;
+}
+
+#noBtn {
+  position: absolute;
+}
+
+/* hearts */
 .heart {
   position: fixed;
   font-size: 24px;
@@ -72,120 +61,153 @@ img {
 }
 
 @keyframes float {
-  0% { transform: translateY(0) scale(1); opacity: 1; }
-  100% { transform: translateY(-160px) scale(1.6); opacity: 0; }
+  to {
+    transform: translateY(-150px) scale(1.5);
+    opacity: 0;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<!-- 🎵 MUSIC -->
-<audio id="bgmRomantic" loop>
+<!-- MUSIC -->
+<audio id="romantic" loop>
   <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">
 </audio>
 
-<audio id="bgmHappy" loop>
+<audio id="happy" loop>
   <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3">
 </audio>
 
-<div class="container">
-  <h1>Will you be my Valentine? 💘</h1>
+<!-- Q1 -->
+<div class="card" id="q1">
+  <h2>Are you rabbit? 🐰</h2>
+  <button class="yes" onclick="go('q1','q2')">Yes</button>
+  <button class="no" onclick="boo()">No</button>
+</div>
 
-  <div class="buttons">
-    <button id="yesBtn">Yes 💖</button>
-    <button id="noBtn">No 😢</button>
-  </div>
+<!-- Q2 -->
+<div class="card hidden" id="q2">
+  <h2>Are you sure? 😏</h2>
+  <button class="yes" onclick="go('q2','q3')">Yes</button>
+  <button class="no" onclick="boo()">No</button>
+</div>
+
+<!-- Q3 -->
+<div class="card hidden" id="q3">
+  <h2>Proof that you are my rabbit 🐰💖</h2>
+  <p>What does my rabbit call me?</p>
+  <input id="answer" placeholder="type here">
+  <br><br>
+  <button class="yes" onclick="checkAnswer()">Submit</button>
+  <p id="hint" style="color:red;"></p>
+</div>
+
+<!-- READY -->
+<div class="card hidden" id="ready">
+  <h2>Yay! Confirmed you are my rabbit 🥰</h2>
+  <p>Are you ready for a serious question? 😌</p>
+  <button class="yes" onclick="go('ready','valentine')">Yes</button>
+  <button class="no" onclick="go('ready','ready')">No</button>
+</div>
+
+<!-- VALENTINE -->
+<div class="card hidden" id="valentine">
+  <h1>Will you be my Valentine? 💘</h1>
+  <button class="yes" id="yesBtn">Yes 💖</button>
+  <button class="no" id="noBtn">No 😢</button>
 
   <div id="result" class="hidden">
     <h2 id="message"></h2>
-    <img id="gif">
+    <img id="gif" width="220">
   </div>
 </div>
 
 <script>
-/* ✨ CUSTOM YES MESSAGE ✨ */
-const yesMessage = "I can’t wait to celebrate Valentine’s Day with you ❤️";
+/* EDIT THESE */
+const correctAnswer = "potato"; // all lowercase
+const yesMessage = "I knew it 🥰 Happy Valentine’s Day 💖";
 
-/* ----------------------- */
+/* music */
+const romantic = document.getElementById("romantic");
+const happy = document.getElementById("happy");
+let musicStarted = false;
 
+document.addEventListener("click",()=>{
+  if(!musicStarted){
+    romantic.play().catch(()=>{});
+    musicStarted = true;
+  }
+});
+
+/* navigation */
+function go(from,to){
+  document.getElementById(from).classList.add("hidden");
+  document.getElementById(to).classList.remove("hidden");
+}
+
+/* boo */
+function boo(){
+  alert("Boo! Go back — this is only for my rabbit 🐰");
+}
+
+/* check proof */
+function checkAnswer(){
+  const val = document.getElementById("answer").value.trim();
+  if(val === correctAnswer){
+    go('q3','ready');
+  } else {
+    document.getElementById("hint").innerText =
+      "Hint: type in all small letters 😉";
+    vibrate(300);
+  }
+}
+
+/* valentine logic */
 const noBtn = document.getElementById("noBtn");
 const yesBtn = document.getElementById("yesBtn");
 const result = document.getElementById("result");
 const message = document.getElementById("message");
 const gif = document.getElementById("gif");
 
-const romantic = document.getElementById("bgmRomantic");
-const happy = document.getElementById("bgmHappy");
-
-let musicStarted = false;
-let noAttempts = 0;
-
-/* 🎵 Start background music on interaction */
-["click","mousemove","touchstart"].forEach(e=>{
-  document.addEventListener(e, ()=>{
-    if(!musicStarted){
-      romantic.volume = 0.4;
-      romantic.play().catch(()=>{});
-      musicStarted = true;
-    }
-  });
-});
-
-/* 😈 NO button avoids pointer (gets faster) */
-noBtn.addEventListener("mouseover", ()=>{
-  noAttempts++;
+noBtn.addEventListener("mouseover",()=>{
   vibrate(200);
-
-  const speed = Math.max(0.08, 0.4 - noAttempts * 0.03);
-  noBtn.style.transition = `all ${speed}s`;
-
-  const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
-  const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
-
-  noBtn.style.left = `${x}px`;
-  noBtn.style.top = `${y}px`;
+  noBtn.style.left = Math.random()*70 + "%";
+  noBtn.style.top = Math.random()*70 + "%";
 });
 
-/* ❌ NO clicked */
-noBtn.addEventListener("click", ()=>{
-  vibrate(400);
-  result.classList.remove("hidden");
-  message.innerText = "❌ Wrong answer! Try again 😏";
+noBtn.addEventListener("click",()=>{
+  message.innerText = "Wrong answer 😏 Try again";
   gif.src = "https://media.giphy.com/media/3o7aD2saalBwwftBIY/giphy.gif";
+  result.classList.remove("hidden");
 });
 
-/* 💖 YES clicked */
-yesBtn.addEventListener("click", ()=>{
+yesBtn.addEventListener("click",()=>{
   romantic.pause();
-  happy.volume = 0.5;
   happy.play();
-
-  result.classList.remove("hidden");
   message.innerText = yesMessage;
   gif.src = "https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif";
-
-  heartExplosion();
+  result.classList.remove("hidden");
+  hearts();
 });
 
-/* 💓 Heart particles */
-function heartExplosion(){
-  for(let i=0;i<35;i++){
-    const heart = document.createElement("div");
-    heart.className = "heart";
-    heart.innerText = "💖";
-    heart.style.left = Math.random()*100+"vw";
-    heart.style.top = "80vh";
-    document.body.appendChild(heart);
-    setTimeout(()=>heart.remove(),2000);
+/* hearts */
+function hearts(){
+  for(let i=0;i<30;i++){
+    const h = document.createElement("div");
+    h.className = "heart";
+    h.innerText = "💖";
+    h.style.left = Math.random()*100+"vw";
+    h.style.top = "80vh";
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),2000);
   }
 }
 
-/* 📳 Vibration */
+/* vibration */
 function vibrate(ms){
-  if(navigator.vibrate){
-    navigator.vibrate(ms);
-  }
+  if(navigator.vibrate) navigator.vibrate(ms);
 }
 </script>
 
