@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Be My Valentine 💖</title>
+
+<style>
+body {
+  height: 100vh;
+  margin: 0;
+  background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Poppins', sans-serif;
+  overflow: hidden;
+}
+
+.container {
+  text-align: center;
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  max-width: 400px;
+  position: relative;
+  z-index: 2;
+}
+
+h1 { color: #ff4d6d; }
+
+.buttons {
+  margin-top: 30px;
+  position: relative;
+  height: 120px;
+}
+
+button {
+  padding: 12px 30px;
+  font-size: 18px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  position: absolute;
+}
+
+#yesBtn {
+  background: #ff4d6d;
+  color: white;
+  left: 30%;
+}
+
+#noBtn {
+  background: #adb5bd;
+  color: white;
+  left: 55%;
+}
+
+.hidden { display: none; }
+
+img {
+  width: 250px;
+  margin-top: 20px;
+  border-radius: 15px;
+}
+
+/* 💓 Heart animation */
+.heart {
+  position: fixed;
+  font-size: 24px;
+  animation: float 2s linear forwards;
+}
+
+@keyframes float {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-160px) scale(1.6); opacity: 0; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- 🎵 MUSIC -->
+<audio id="bgmRomantic" loop>
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">
+</audio>
+
+<audio id="bgmHappy" loop>
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3">
+</audio>
+
+<div class="container">
+  <h1>Will you be my Valentine? 💘</h1>
+
+  <div class="buttons">
+    <button id="yesBtn">Yes 💖</button>
+    <button id="noBtn">No 😢</button>
+  </div>
+
+  <div id="result" class="hidden">
+    <h2 id="message"></h2>
+    <img id="gif">
+  </div>
+</div>
+
+<script>
+/* ✨ CUSTOM YES MESSAGE ✨ */
+const yesMessage = "I can’t wait to celebrate Valentine’s Day with you ❤️";
+
+/* ----------------------- */
+
+const noBtn = document.getElementById("noBtn");
+const yesBtn = document.getElementById("yesBtn");
+const result = document.getElementById("result");
+const message = document.getElementById("message");
+const gif = document.getElementById("gif");
+
+const romantic = document.getElementById("bgmRomantic");
+const happy = document.getElementById("bgmHappy");
+
+let musicStarted = false;
+let noAttempts = 0;
+
+/* 🎵 Start background music on interaction */
+["click","mousemove","touchstart"].forEach(e=>{
+  document.addEventListener(e, ()=>{
+    if(!musicStarted){
+      romantic.volume = 0.4;
+      romantic.play().catch(()=>{});
+      musicStarted = true;
+    }
+  });
+});
+
+/* 😈 NO button avoids pointer (gets faster) */
+noBtn.addEventListener("mouseover", ()=>{
+  noAttempts++;
+  vibrate(200);
+
+  const speed = Math.max(0.08, 0.4 - noAttempts * 0.03);
+  noBtn.style.transition = `all ${speed}s`;
+
+  const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+  const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+
+  noBtn.style.left = `${x}px`;
+  noBtn.style.top = `${y}px`;
+});
+
+/* ❌ NO clicked */
+noBtn.addEventListener("click", ()=>{
+  vibrate(400);
+  result.classList.remove("hidden");
+  message.innerText = "❌ Wrong answer! Try again 😏";
+  gif.src = "https://media.giphy.com/media/3o7aD2saalBwwftBIY/giphy.gif";
+});
+
+/* 💖 YES clicked */
+yesBtn.addEventListener("click", ()=>{
+  romantic.pause();
+  happy.volume = 0.5;
+  happy.play();
+
+  result.classList.remove("hidden");
+  message.innerText = yesMessage;
+  gif.src = "https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif";
+
+  heartExplosion();
+});
+
+/* 💓 Heart particles */
+function heartExplosion(){
+  for(let i=0;i<35;i++){
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerText = "💖";
+    heart.style.left = Math.random()*100+"vw";
+    heart.style.top = "80vh";
+    document.body.appendChild(heart);
+    setTimeout(()=>heart.remove(),2000);
+  }
+}
+
+/* 📳 Vibration */
+function vibrate(ms){
+  if(navigator.vibrate){
+    navigator.vibrate(ms);
+  }
+}
+</script>
+
+</body>
+</html>
